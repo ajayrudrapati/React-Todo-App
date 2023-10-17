@@ -1,6 +1,6 @@
 import React from 'react';
 
-const TodoItem = ({ todo, onToggleComplete }) => {
+const TodoItem = ({ todo, onToggleComplete, onDelete }) => {
   const { title, description, author, dateCreated, complete, dateCompleted } = todo;
 
   const handleCheckboxChange = () => {
@@ -10,6 +10,11 @@ const TodoItem = ({ todo, onToggleComplete }) => {
       dateCompleted: !todo.complete ? Date.now() : null
     };
     onToggleComplete(updatedTodo);
+  };
+
+  const handleDelete = (todoId) => {
+      onDelete(todo.id);
+    console.log("deleted");
   };
 
   return (
@@ -23,6 +28,8 @@ const TodoItem = ({ todo, onToggleComplete }) => {
         <input type="checkbox" checked={complete} onChange={handleCheckboxChange} />
       </label>
       {complete && <p>Date Completed: {new Date(dateCompleted).toLocaleString()}</p>}
+      
+      <button onClick={handleDelete}>Delete</button>
     </div>
   );
 };

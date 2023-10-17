@@ -10,11 +10,10 @@ const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loggedInUsername, setLoggedInUsername] = useState('');
 
-const handleLogin = (username) => {
-  setIsLoggedIn(true);
-  setLoggedInUsername(username);  // Update the loggedInUsername
-};
-
+  const handleLogin = (username) => {
+    setIsLoggedIn(true);
+    setLoggedInUsername(username);
+  };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
@@ -27,6 +26,7 @@ const handleLogin = (username) => {
   const addTodo = (todo) => {
     setTodos([...todos, todo]);
   };
+
   const handleToggleComplete = (updatedTodo) => {
     const updatedTodos = todos.map((todo) =>
       todo.id === updatedTodo.id ? { ...todo, ...updatedTodo } : todo
@@ -34,9 +34,13 @@ const handleLogin = (username) => {
     setTodos(updatedTodos);
     console.log('Updated todos:', updatedTodos);
   };
-  
 
-  
+  const handleDelete = (todoId) => {
+    const updatedTodos = todos.filter((todo) => todo.id !== todoId);
+    setTodos(updatedTodos);
+    console.log('Deleted todo with id:', todoId);
+  };
+
   let content;
 
   if (isLoggedIn) {
@@ -44,7 +48,7 @@ const handleLogin = (username) => {
       <div>
         <Logout handleLogout={handleLogout} />
         <TodoForm addTodo={addTodo} username={loggedInUsername} />
-        <TodoList todos={todos} onToggleComplete={handleToggleComplete}/>
+        <TodoList todos={todos} onToggleComplete={handleToggleComplete} onDelete={handleDelete} />
       </div>
     );
   } else {
@@ -56,8 +60,7 @@ const handleLogin = (username) => {
     );
   }
 
-  return <div>{content}
-  </div>;
+  return <div>{content}</div>;
 };
 
 export default App;
