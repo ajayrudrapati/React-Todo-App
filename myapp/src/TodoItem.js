@@ -11,6 +11,7 @@ const TodoItem = ({ todo, onToggleComplete, onDelete }) => {
     };
     onToggleComplete(updatedTodo);
   };
+  
 
   const handleDelete = (todoId) => {
       onDelete(todo.id);

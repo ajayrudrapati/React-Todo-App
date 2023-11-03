@@ -1,9 +1,23 @@
-import React, { useState } from 'react';
+import React, {useEffect,useState } from 'react';
+import axios from 'axios';
+
 
 const TodoForm = ({ addTodo, username }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [todos, setTodos] = useState([]);
+
+
+  useEffect(() => {
+    // Fetch todos from the API when the component mounts
+    axios.get('http://localhost:3001/todo')  // Replace with your API endpoint
+      .then(response => {
+        setTodos(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching todos:', error);
+      });
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -45,10 +59,10 @@ const TodoForm = ({ addTodo, username }) => {
         </label>
         <button type="submit">Add Todo</button>
       </form>
-
+<h2>Mock API Todo List</h2>
       <ul>
         {todos.map(todo => (
-          <div key={todo.id} style={{ marginBottom: '10px' }}>
+          <div key={todo.id} >
             <h3>{todo.title}</h3>
             <p>Description: {todo.description || 'N/A'}</p>
             <p>Author: {todo.author}</p>
