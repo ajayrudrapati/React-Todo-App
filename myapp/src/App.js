@@ -1,66 +1,45 @@
-import React, { useState } from 'react';
-import TodoList from './TodoList';
-import TodoForm from './TodoForm';
-import Login from './Login';
-import Registration from './Registration';
-import Logout from './Logout';
+import React, { useEffect, useState } from 'react';
+import { Route, Routes, useNavigate } from 'react-router-dom';
+import Login from './components/Login';
+import Register from './components/Register';
+import TaskList from './components/Tasks';
 
 const App = () => {
-  const [todos, setTodos] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loggedInUsername, setLoggedInUsername] = useState('');
-  
-  const handleLogin = (username) => {
-    setIsLoggedIn(true);
-    setLoggedInUsername(username);
+  const [isloggedin, setLogin] = useState(false);
+  const [token, setToken] = useState('');
+  const navigate = useNavigate();
+
+  const setLoginTrue = () => {
+    const storedToken = sessionStorage.getItem('token');
+    setToken(storedToken);
+    setLogin(true);
+    navigate('/Tasks');
   };
+
+  useEffect(() => {
+    // Check if the user is logged in (after the page loads)
+    // If they're not, redirect them to the homepage
+    if (!isloggedin && window.location.pathname !== '/') {
+      navigate('/');
+    }
+  }, [isloggedin, navigate]);
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
+    sessionStorage.clear();
+    setLogin(false);
+    navigate('/');
   };
 
-  const handleRegistration = () => {
-    setIsLoggedIn(true);
-  };
-
-  const addTodo = (todo) => {
-    setTodos([...todos, todo]);
-  };
-
-  const handleToggleComplete = (updatedTodo) => {
-    const updatedTodos = todos.map((todo) =>
-      todo.id === updatedTodo.id ? { ...todo, ...updatedTodo } : todo
-    );
-    setTodos(updatedTodos);
-    console.log('Updated todos:', updatedTodos);
-  };
-
-  const handleDelete = (todoId) => {
-    const updatedTodos = todos.filter((todo) => todo.id !== todoId);
-    setTodos(updatedTodos);
-    console.log('Deleted todo with id:', todoId);
-  };
-
-  let content;
-
-  if (isLoggedIn) {
-    content = (
-      <div>
-        <Logout handleLogout={handleLogout} />
-        <TodoForm addTodo={addTodo} username={loggedInUsername} />
-        <TodoList todos={todos} onToggleComplete={handleToggleComplete} onDelete={handleDelete} />
-      </div>
-    );
-  } else {
-    content = (
-      <div>
-        <Login handleLogin={handleLogin} />
-        <Registration handleRegistration={handleRegistration} />
-      </div>
-    );
-  }
-
-  return <div>{content}</div>;
+  return (
+    <div>
+      {isloggedin && <button onClick={handleLogout}>Logout</button>}
+      <Routes>
+        <Route path="/" element={<Login onLogin={setLoginTrue} />} />
+        <Route path="/Register" element={<Register />} />
+        {isloggedin && <Route path="/Tasks" element={<TaskList />} />}
+      </Routes>
+    </div>
+  );
 };
 
 export default App;
